@@ -10,8 +10,10 @@
   "author": "Nathan Lucy",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.27.2",
     "bluebird": "^3.7.2",
     "express": "^4.18.1",
+    "jquery": "^3.6.0",
     "mongoose": "^6.5.2",
     "nodemon": "^2.0.19"
   }
