@@ -21,8 +21,9 @@ app.post('/seasons', (req, res) => {
   .then(response => console.log(response));
 })
 
-app.get('./seasons', (req, res) => {
-  getSeasons
-  .then(season => res.send(season));
+app.get('/seasons', (req, res) => {
+  getSeasons()
+  .then(seasons => {
+    res.send(seasons)});
 })
 

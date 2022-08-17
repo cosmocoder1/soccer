@@ -2263,9 +2263,11 @@ const process = (data) => {
   return collection;
 }
 
-const append = (ranking, i) => {
+const append = (result) => {
 
-  // format ranking for display
+  result.forEach((ranking, i) => {
+
+    // format ranking for display
   const point = ranking.rank === 1 ? "pt" : "pts";
   const textnode = `${i + 1}. ${ranking.team}, ${ranking.rank}${point}`
 
@@ -2276,6 +2278,30 @@ const append = (ranking, i) => {
   newElement.innerHTML = textnode;
   document.getElementById("output").appendChild(newElement);
 
+  });
+
+}
+
+const appendPastSeasons = (seasons) => {
+
+  retrievePastSeasons()
+  .then(seasons => {
+
+    seasons.forEach((ranking, i) => {
+
+      // format ranking for display
+    const point = ranking.rank === 1 ? "pt" : "pts";
+    const textnode = `${i + 1}. ${ranking.team}, ${ranking.rank}${point}`
+
+    // append to DOM
+    const newElement = document.createElement('div');
+    const classes = newElement.classList;
+    classes.add('ranking');
+    newElement.innerHTML = textnode;
+    document.getElementById("past_seasons").appendChild(newElement);
+
+    });
+  })
 }
 
 const clear = () => {
@@ -2285,21 +2311,39 @@ const clear = () => {
   }
 }
 
+const clearPastSeasons = () => {
+  let parent = document.getElementById("past_seasons");
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
+
 const save = (season) => {
-  console.log('save invoked')
   axios.post('/seasons', { input: season })
   .then(response => {
-    console.log('season record creation successfull');
+    console.log('season record creation successful');
   })
   .catch(error => {
     console.log('season record creation error => ', err);
   });
 }
 
+// const retrievePastSeasons = () => {
+//   return axios.get('/seasons')
+//   .then(response => {
+//     console.log('season record retrieval successful');
+//   })
+//   .catch(error => {
+//     console.log('season record retrieval error => ', err);
+//   })
+// }
+
 module.exports = {
   process,
   append,
+  appendPastSeasons,
   clear,
+  clearPastSeasons,
   save
 }
 },{"axios":6}],6:[function(require,module,exports){
@@ -4485,20 +4529,22 @@ module.exports = {
 },{"./helpers/bind":23}],38:[function(require,module,exports){
 const chant = new Audio('./assets/South_Africa_Vuvuzela_Chant_Holland_vs._Denmark.mp3');
 const axios = require('axios');
-const { process, append, clear, save } = require('../lib/helpers');
+const { process, append, appendPastSeasons, clear, clearPastSeasons, save } = require('../lib/helpers');
 
 const app = Vue.createApp({
   methods: {
     processMatchData() {
       clear();
-      let values = document.getElementById("match_values").value;
-      let result = process(values);
-      result.forEach((ranking, i) => {
-        append(ranking, i);
-      });
       document.getElementById("match_values").value = "";
+      let values = document.getElementById("match_values").value;
+      let results = process(values);
+      append(results);
+      save(results);
       chant.play();
-      save(result);
+    },
+    displayPastSeasons() {
+      clearPastSeasons();
+      appendPastSeasons();
     }
   }
 })
