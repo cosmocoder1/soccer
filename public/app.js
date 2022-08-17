@@ -6,14 +6,20 @@ const app = Vue.createApp({
   methods: {
     processMatchData() {
       clear();
+
       let values = document.getElementById("match_values").value;
       let result = process(values);
+
       result.forEach((ranking, i) => {
         append(ranking, i);
       });
+
       document.getElementById("match_values").value = "";
       chant.play();
       save(result);
+    },
+    displayPastSeasons() {
+      // retrieve and display persisted season data from db
     }
   }
 })
