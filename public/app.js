@@ -5,26 +5,23 @@ const app = Vue.createApp({
       let values = document.getElementById("match_values").value;
       let result = process(values);
       result.forEach((ranking, i) => {
-        let point = ranking.rank === 1 ? "pt" : "pts";
-        const textnode = `${i + 1}. ${ranking.team}, ${ranking.rank}${point}`
-        let newElement = document.createElement('div');
-        newElement.innerHTML = textnode;
-        document.getElementById("output").appendChild(newElement);
-      })
+        append(ranking, i);
+      });
       document.getElementById("match_values").value = "";
     }
   }
 })
 
 const process = (data) => {
-  let trimmed = data.split('').filter(val => val !== ",").join('').split(' ');
 
+  // format input for processing (remove commas, account for team name spacing, etc.)
+  let trimmed = data.split('').filter(val => val !== ",").join('').split(' ');
   let string = "";
   let newData = [];
 
   for (let i = 0; i < trimmed.length; i++) {
     if (isNaN(trimmed[i])) {
-      string = string.concat(trimmed[i]);
+      string = string.concat(trimmed[i] + " ");
     } else {
       newData.push(string);
       newData.push(trimmed[i]);
@@ -32,9 +29,9 @@ const process = (data) => {
     }
   }
 
+  // analyze game outcomes and catalog team standings
   let tallies = {};
   for (let i = 0; i < newData.length; i += 4) {
-
     let teamOne = newData[i];
     let teamTwo = newData[i + 2];
     let scoreOne = newData[i + 1];
@@ -43,7 +40,6 @@ const process = (data) => {
     if (tallies[teamOne] === undefined) {
       tallies[teamOne] = 0;
     }
-
     if (tallies[teamTwo] === undefined) {
       tallies[teamTwo] = 0;
     }
@@ -59,29 +55,29 @@ const process = (data) => {
     }
   }
 
-  let outputString = '';
+  // sort team rankings in descending order, first by score - then alphabetically
   let collection = [];
 
-
   for (let key in tallies) {
-    // outputString = outputString.concat(`${key}, ${tallies[key]}<br>`);
     collection.push({ team: key, rank: tallies[key] });
   }
 
   collection.sort((a, b) => {
     return b.rank - a.rank || a.team.localeCompare(b.team);
   })
-  //.forEach((ranking, i) => {
-  //   let point = ranking.rank === 1 ? "pt" : "pts";
-  //   const textnode = `${i + 1}. ${ranking.team}, ${ranking.rank}${point}`
-  //   let newElement = document.createElement('div');
-  //   newElement.innerHTML = textnode;
-  //   document.getElementById("output").appendChild(newElement);
-  // })
-
   return collection;
+}
 
+const append = (ranking, i) => {
 
+  // format ranking for display
+  const point = ranking.rank === 1 ? "pt" : "pts";
+  const textnode = `${i + 1}. ${ranking.team}, ${ranking.rank}${point}`
+
+  // append to DOM
+  const newElement = document.createElement('div');
+  newElement.innerHTML = textnode;
+  document.getElementById("output").appendChild(newElement);
 
 }
 
