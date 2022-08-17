@@ -1,6 +1,4 @@
 const chant = new Audio('./assets/South_Africa_Vuvuzela_Chant_Holland_vs._Denmark.mp3');
-const { addSeason } = require('../db/controllers/addSeason.js');
-const { getSeasons } = require('../db/controllers/getSeasons.js');
 
 const app = Vue.createApp({
   methods: {
