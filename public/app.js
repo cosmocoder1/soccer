@@ -1,13 +1,16 @@
+const chant = new Audio('./assets/South_Africa_Vuvuzela_Chant_Holland_vs._Denmark.mp3');
 
 const app = Vue.createApp({
   methods: {
     processMatchData() {
+      clear();
       let values = document.getElementById("match_values").value;
       let result = process(values);
       result.forEach((ranking, i) => {
         append(ranking, i);
       });
       document.getElementById("match_values").value = "";
+      chant.play();
     }
   }
 })
@@ -76,9 +79,18 @@ const append = (ranking, i) => {
 
   // append to DOM
   const newElement = document.createElement('div');
+  const classes = newElement.classList;
+  classes.add('ranking');
   newElement.innerHTML = textnode;
   document.getElementById("output").appendChild(newElement);
 
+}
+
+const clear = () => {
+  let parent = document.getElementById("output");
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
 }
 
 app.mount('#app')
